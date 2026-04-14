@@ -17,6 +17,7 @@
       secrets: analyzer.findSecrets(),
       domXSS: analyzer.detectDOMXSS(),
       jwt: analyzer.detectJWT(),
+      heatmap.start();
       requests: hooks.requests
     };
 
