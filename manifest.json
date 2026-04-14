@@ -27,6 +27,36 @@
       "matches": ["<all_urls>"],
       "js": ["scanner.js", "fuzz.js", "content.js"],
       "run_at": "document_idle"
+    },
+    {
+  "manifest_version": 3,
+  "name": "Inline Exploit Surface Viewer",
+  "version": "0.5",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "webRequest"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "hooks.js",
+        "scanner.js",
+        "analyzer.js",
+        "scorer.js",
+        "reporter.js",
+        "fuzz.js",
+        "content.js"
+      ],
+      "run_at": "document_start"
     }
+  ]
+}
   ]
 }
