@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Inline Exploit Surface Viewer",
+  "version": "0.1",
+  "description": "Lightweight recon and exploit surface mapping inside the browser.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Exploit Viewer",
+    "default_popup": "ui/panel.html"
+  },
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["scanner.js", "fuzz.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
