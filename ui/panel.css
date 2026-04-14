@@ -1,0 +1,16 @@
+body {
+  background: black;
+  color: #00ff99;
+  font-family: monospace;
+  width: 300px;
+  padding: 10px;
+}
+
+button {
+  width: 100%;
+  margin-bottom: 5px;
+  background: black;
+  color: #00ff99;
+  border: 1px solid #00ff99;
+  cursor: pointer;
+}
