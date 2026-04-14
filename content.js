@@ -1,6 +1,7 @@
 (function () {
 
   const scanner = window.__IEV_SCANNER__;
+  const heatmap = window.__IEV_HEATMAP__;
   const analyzer = window.__IEV_ANALYZER__;
   const scorer = window.__IEV_SCORER__;
   const reporter = window.__IEV_REPORTER__;
