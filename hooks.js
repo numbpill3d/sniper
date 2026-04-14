@@ -20,6 +20,27 @@ window.__IEV_HOOKS__ = (() => {
     };
   }
 
+  const listeners = [];
+
+function hookAddEventListener() {
+  const orig = EventTarget.prototype.addEventListener;
+
+  EventTarget.prototype.addEventListener = function (type, fn, opts) {
+    listeners.push({
+      target: this,
+      type
+    });
+    return orig.apply(this, arguments);
+  };
+}
+
+hookAddEventListener();
+
+  return {
+  requests,
+  listeners
+};
+
   function hookXHR() {
     const origOpen = XMLHttpRequest.prototype.open;
 
