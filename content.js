@@ -1,69 +1,60 @@
 (function () {
 
   const scanner = window.__IEV_SCANNER__;
-  const fuzz = window.__IEV_FUZZ__;
+  const analyzer = window.__IEV_ANALYZER__;
+  const scorer = window.__IEV_SCORER__;
+  const reporter = window.__IEV_REPORTER__;
+  const hooks = window.__IEV_HOOKS__;
 
-  function runScan() {
-    const data = {
+  function fullScan() {
+
+    const results = {
       endpoints: scanner.extractEndpoints(),
       params: scanner.extractParams(),
       csp: scanner.detectCSP(),
-      listeners: scanner.listEventListeners()
+      listeners: scanner.listEventListeners(),
+      secrets: analyzer.findSecrets(),
+      domXSS: analyzer.detectDOMXSS(),
+      jwt: analyzer.detectJWT(),
+      requests: hooks.requests
     };
 
-    console.log("[IEV] Scan Results:", data);
-    injectOverlay(data);
+    const scoreData = scorer.score(results);
+    const report = reporter.generate(results, scoreData);
+
+    injectOverlay(report);
+
+    console.log("[IEV REPORT]", report);
   }
 
-  function injectOverlay(data) {
-    const panel = document.createElement("div");
-    panel.id = "iev-overlay";
+  function injectOverlay(report) {
+    const el = document.createElement("div");
 
-    panel.innerHTML = `
-      <div class="iev-header">Exploit Surface</div>
-      <div>Endpoints: ${data.endpoints.length}</div>
-      <div>Params: ${data.params.length}</div>
-      <div>CSP: ${data.csp.exists ? (data.csp.weak ? "Weak" : "OK") : "Missing"}</div>
-      <button id="iev-highlight">Highlight Inputs</button>
-      <button id="iev-fuzz">Fuzz Inputs</button>
+    el.innerHTML = `
+      <div><b>Score:</b> ${report.score}/100</div>
+      <div><b>Issues:</b> ${report.issues.join(", ")}</div>
+      <button id="iev-export">Export Report</button>
     `;
 
-    document.body.appendChild(panel);
+    el.style = `
+      position:fixed;
+      bottom:10px;
+      right:10px;
+      background:black;
+      color:#00ff99;
+      padding:10px;
+      z-index:999999;
+      font-family:monospace;
+      border:1px solid #00ff99;
+    `;
 
-    document.getElementById("iev-highlight").onclick = () => {
-      scanner.highlightInputs();
-    };
+    document.body.appendChild(el);
 
-    document.getElementById("iev-fuzz").onclick = () => {
-      fuzz.fuzzInputs();
+    document.getElementById("iev-export").onclick = () => {
+      reporter.download(report);
     };
   }
 
-  const style = document.createElement("style");
-  style.textContent = `
-    #iev-overlay {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background: black;
-      color: #00ff99;
-      font-family: monospace;
-      font-size: 12px;
-      padding: 10px;
-      z-index: 999999;
-      border: 1px solid #00ff99;
-    }
-    #iev-overlay button {
-      display: block;
-      margin-top: 5px;
-      background: black;
-      color: #00ff99;
-      border: 1px solid #00ff99;
-      cursor: pointer;
-    }
-  `;
-  document.head.appendChild(style);
-
-  runScan();
+  setTimeout(fullScan, 1500);
 
 })();
